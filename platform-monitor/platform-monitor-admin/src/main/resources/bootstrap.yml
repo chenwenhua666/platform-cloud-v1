@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: platform-monitor-admin
+  cloud:
+    nacos:
+      config:
+        server-addr: ${nacos.url}:9901
+        group: DEFAULT_GROUP
+        prefix: platform-monitor-admin
+        file-extension: yaml
+
+logging:
+  level:
+    com:
+      alibaba:
+        cloud:
+          nacos:
+            client:
+              NacosPropertySourceBuilder: error

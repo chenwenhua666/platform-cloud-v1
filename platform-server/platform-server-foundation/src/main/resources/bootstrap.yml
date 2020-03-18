@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: platform-server-foundation
+  profiles:
+    active: dev
+  cloud:
+    nacos:
+      config:
+        server-addr: ${nacos.url}:9901
+        group: DEFAULT_GROUP
+        prefix: platform-server-foundation
+        file-extension: yaml
+        refreshable-dataids:
+      discovery:
+        server-addr: ${nacos.url}:9901
+
+logging:
+  level:
+    com:
+      alibaba:
+        cloud:
+          nacos:
+            client:
+              NacosPropertySourceBuilder: error
+
+
+

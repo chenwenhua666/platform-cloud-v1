@@ -1,0 +1,105 @@
+version: '3'
+
+services:
+  platform-monitor-admin:
+    image: platform-monitor-admin:latest
+    container_name: platform-monitor-admin
+    volumes:
+      - "/platform/log:/log"
+    command:
+      - "--nacos.url=127.0.0.1"
+    environment:
+      - "TZ=Asia/Shanghai"
+    ports:
+      - 9904:9904
+    restart: on-failure
+  platform-gateway:
+    image: platform-gateway:latest
+    container_name: platform-gateway
+    volumes:
+      - "/platform/log:/log"
+    command:
+      - "--platform-monitor-admin=127.0.0.1"
+      - "--nacos.url=127.0.0.1"
+    environment:
+      - "TZ=Asia/Shanghai"
+    ports:
+      - 9903:9903
+    restart: on-failure
+  platform-auth:
+    image: platform-auth:latest
+    container_name: platform-auth
+    volumes:
+      - "/platform/log:/log"
+    command:
+      - "--platform-monitor-admin=127.0.0.1"
+      - "--nacos.url=127.0.0.1"
+      - "--mysql.url=127.0.0.1"
+      - "--redis.url=127.0.0.1"
+      - "--spring.profiles.active=prod"
+    environment:
+      - "TZ=Asia/Shanghai"
+    ports:
+      - 9902:9902
+    restart: on-failure
+  platform-server-system:
+    image: platform-server-system:latest
+    container_name: platform-server-system
+    volumes:
+      - "/platform/log:/log"
+    command:
+      - "--platform-monitor-admin=127.0.0.1"
+      - "--platform-gateway=127.0.0.1"
+      - "--nacos.url=127.0.0.1"
+      - "--mysql.url=127.0.0.1"
+      - "--rabbitmq.url=127.0.0.1"
+      - "--spring.profiles.active=prod"
+    environment:
+      - "TZ=Asia/Shanghai"
+    ports:
+      - 9905:9905
+    restart: on-failure
+  platform-server-test:
+    image: platform-server-test:latest
+    container_name: platform-server-test
+    volumes:
+      - "/platform/log:/log"
+    command:
+      - "--rabbitmq.url=127.0.0.1"
+      - "--nacos.url=127.0.0.1"
+      - "--platform-monitor-admin=127.0.0.1"
+      - "--platform-gateway=127.0.0.1"
+    environment:
+      - "TZ=Asia/Shanghai"
+    ports:
+      - 9906:9906
+    restart: on-failure
+  zipkin-server:
+    image: zipkin-server
+    container_name: zipkin-server
+    command:
+      - "--server.port=9920"
+      - "--zipkin.storage.type=mysql"
+      - "--zipkin.storage.mysql.db=platform_cloud_base"
+      - "--zipkin.storage.mysql.username=root"
+      - "--zipkin.storage.mysql.password=123456"
+      - "--zipkin.storage.mysql.host=127.0.0.1"
+      - "--zipkin.storage.mysql.port=3306"
+      - "--zipkin.collector.rabbitmq.addresses=127.0.0.1:5672"
+      - "--zipkin.collector.rabbitmq.username=platform"
+      - "--zipkin.collector.rabbitmq.password=123456a_"
+    environment:
+      - "TZ=Asia/Shanghai"
+    ports:
+      - 9920:9920
+    restart: on-failure
+  platform-cloud-web:
+    image: platform-cloud-web
+    container_name: platform-cloud-web
+    volumes:
+      - "/platform/log:/log"
+    environment:
+      - "TZ=Asia/Shanghai"
+    ports:
+      - 9529:80
+    restart: on-failure

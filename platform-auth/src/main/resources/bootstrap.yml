@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: platform-auth
+  profiles:
+    active: dev
+  cloud:
+    nacos:
+      config:
+        server-addr: ${nacos.url}:9901
+        group: DEFAULT_GROUP
+        prefix: platform-auth
+        file-extension: yaml
+      discovery:
+        server-addr: ${nacos.url}:9901
+
+logging:
+  level:
+    com:
+      alibaba:
+        cloud:
+          nacos:
+            client:
+              NacosPropertySourceBuilder: error
